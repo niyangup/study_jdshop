@@ -22,8 +22,8 @@ class ProductContentItem {
   String sId;
   String title;
   String cid;
-  String price;
-  String oldPrice;
+  Object price;
+  Object oldPrice;
   Object isBest;
   Object isHot;
   Object isNew;
@@ -101,12 +101,14 @@ class ProductContentItem {
 class Attr {
   String cate;
   List<String> list;
+  List<Map> attrList;
 
   Attr({this.cate, this.list});
 
   Attr.fromJson(Map<String, dynamic> json) {
     cate = json['cate'];
     list = json['list'].cast<String>();
+    attrList = [];
   }
 
   Map<String, dynamic> toJson() {

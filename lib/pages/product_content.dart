@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_jdshop/model/product_model.dart';
 import 'package:flutter_jdshop/widget/buy_button.dart';
+import 'package:flutter_jdshop/widget/loading_widget.dart';
 import '../services/screen_adapter.dart';
 
 import 'ProductContent/ProductContentFirst.dart';
@@ -82,57 +82,62 @@ class _ProductContentPageState extends State<ProductContentPage> {
             )
           ],
         ),
-        body: Stack(
-          children: <Widget>[
-            TabBarView(children: <Widget>[
-              ProductContentFirst(),
-              ProductContentSecond(),
-              ProductContentThird()
-            ]),
-            Positioned(
-              width: ScreenAdapter.width(750),
-              height: ScreenAdapter.width(100),
-              bottom: 0,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border(
-                      top: BorderSide(color: Colors.black26),
-                    )),
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(
-                          left: ScreenAdapter.width(100),
-                          right: ScreenAdapter.width(100),
-                          top: ScreenAdapter.height(10)),
-                      child: Column(
+        body: this.productContentItem == null
+            ? LoadingWidget()
+            : Stack(
+                children: <Widget>[
+                  TabBarView(
+                    children: <Widget>[
+                      ProductContentFirst(this.productContentItem),
+                      ProductContentSecond(this.productContentItem),
+                      ProductContentThird()
+                    ],
+                    physics: NeverScrollableScrollPhysics(),
+                  ),
+                  Positioned(
+                    width: ScreenAdapter.width(750),
+                    height: ScreenAdapter.width(100),
+                    bottom: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border(
+                            top: BorderSide(color: Colors.black26),
+                          )),
+                      child: Row(
                         children: <Widget>[
-                          Icon(Icons.shopping_cart),
-                          Text('购物车')
+                          Container(
+                            padding: EdgeInsets.only(
+                                left: ScreenAdapter.width(100),
+                                right: ScreenAdapter.width(100),
+                                top: ScreenAdapter.height(10)),
+                            child: Column(
+                              children: <Widget>[
+                                Icon(Icons.shopping_cart),
+                                Text('购物车')
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                              flex: 1,
+                              child: BuyButton(
+                                  text: "加入购物车",
+                                  color: Color.fromRGBO(253, 1, 0, 0.9),
+                                  callback: () {})),
+                          SizedBox(width: ScreenAdapter.width(20)),
+                          Expanded(
+                              flex: 1,
+                              child: BuyButton(
+                                  text: "立即购买",
+                                  color: Color.fromRGBO(255, 165, 0, 0.9),
+                                  callback: () {})),
+                          SizedBox(width: ScreenAdapter.width(10)),
                         ],
                       ),
                     ),
-                    Expanded(
-                        flex: 1,
-                        child: BuyButton(
-                            text: "加入购物车",
-                            color: Color.fromRGBO(253, 1, 0, 0.9),
-                            callback: () {})),
-                    SizedBox(width: ScreenAdapter.width(20)),
-                    Expanded(
-                        flex: 1,
-                        child: BuyButton(
-                            text: "立即购买",
-                            color: Color.fromRGBO(255, 165, 0, 0.9),
-                            callback: () {})),
-                    SizedBox(width: ScreenAdapter.width(10)),
-                  ],
-                ),
+                  )
+                ],
               ),
-            )
-          ],
-        ),
       ),
     );
   }

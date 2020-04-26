@@ -31,9 +31,9 @@ class _TabsState extends State<Tabs> {
     ScreenAdapter.init(context);
 
     return Scaffold(
-      appBar: _currentIndex == 3
+      appBar: _currentIndex >= 2
           ? AppBar(
-              title: Text('用户中心'),
+              title: _currentIndex == 2 ? Text('购物车') : Text('用户中心'),
             )
           : AppBar(
               leading: IconButton(
