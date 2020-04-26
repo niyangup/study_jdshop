@@ -4,7 +4,9 @@ import 'package:flutter_jdshop/services/screen_adapter.dart';
 
 ///购物车item
 class CartItem extends StatefulWidget {
-  CartItem({Key key}) : super(key: key);
+  final Map _itemData;
+
+  CartItem(this._itemData, {Key key}) : super(key: key);
 
   @override
   _CartItemState createState() {
@@ -36,28 +38,27 @@ class _CartItemState extends State<CartItem> {
               padding: EdgeInsets.only(right: ScreenAdapter.width(10)),
               width: ScreenAdapter.width(160),
               child: Image.network(
-                "https://www.itying.com/images/flutter/list2.jpg",
+                "${widget._itemData['pic']}",
                 fit: BoxFit.cover,
               ),
             ),
             Expanded(
               flex: 1,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    '啊哈哈哈哈哈哈哈哈哈哈哈哈这又点少啊哈哈哈哈哈哈哈哈哈',
-                    maxLines: 2,
-                  ),
+                  Text('${widget._itemData["title"]}', maxLines: 2),
+                  Text("${widget._itemData["selectedAttr"]}", maxLines: 2),
                   Stack(
                     children: <Widget>[
                       Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text('￥30'),
+                        alignment: Alignment.topLeft,
+                        child: Text('￥${widget._itemData["price"]}'),
                       ),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: CartNum(),
+                        child: CartNum(widget._itemData),
                       )
                     ],
                   )

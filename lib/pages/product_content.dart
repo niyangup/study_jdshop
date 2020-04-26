@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_jdshop/provider/cart_provider.dart';
+import 'package:flutter_jdshop/services/cart_service.dart';
+import 'package:flutter_jdshop/services/event_bus.dart';
 import 'package:flutter_jdshop/widget/buy_button.dart';
 import 'package:flutter_jdshop/widget/loading_widget.dart';
+import 'package:provider/provider.dart';
 import '../services/screen_adapter.dart';
 
 import 'ProductContent/ProductContentFirst.dart';
@@ -39,6 +43,7 @@ class _ProductContentPageState extends State<ProductContentPage> {
 
   @override
   Widget build(BuildContext context) {
+    var cartProvider = Provider.of<Cart>(context);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -123,14 +128,29 @@ class _ProductContentPageState extends State<ProductContentPage> {
                               child: BuyButton(
                                   text: "加入购物车",
                                   color: Color.fromRGBO(253, 1, 0, 0.9),
-                                  callback: () {})),
+                                  callback: () async {
+                                    if (this.productContentItem.attr.length >
+                                        0) {
+                                      eventBus
+                                          .fire(ProductContentEvent("加入购物车"));
+                                    } else {
+                                      await CartService.addCart(
+                                          this.productContentItem);
+                                      cartProvider.updateCartList();
+                                    }
+                                  })),
                           SizedBox(width: ScreenAdapter.width(20)),
                           Expanded(
                               flex: 1,
                               child: BuyButton(
                                   text: "立即购买",
                                   color: Color.fromRGBO(255, 165, 0, 0.9),
-                                  callback: () {})),
+                                  callback: () {
+                                    this.productContentItem.attr.length > 0
+                                        ? eventBus
+                                            .fire(ProductContentEvent("立即购买"))
+                                        : print('立即购买');
+                                  })),
                           SizedBox(width: ScreenAdapter.width(10)),
                         ],
                       ),

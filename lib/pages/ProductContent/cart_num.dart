@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_jdshop/model/product_content_model.dart';
 import 'package:flutter_jdshop/services/screen_adapter.dart';
 
-///购物车item数量加减区域
+///购物车item数量加减区域 用于BottomSheet
 class CartNum extends StatefulWidget {
-  final Map itemData;
+  final ProductContentItem productContentItem;
 
-  CartNum(this.itemData, {Key key}) : super(key: key);
+  CartNum(this.productContentItem, {Key key}) : super(key: key);
 
   @override
   _CartNumState createState() {
@@ -34,7 +35,13 @@ class _CartNumState extends State<CartNum> {
   ///左侧按钮
   Widget _leftBtn() {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        setState(() {
+          if (widget.productContentItem.count > 1) {
+            widget.productContentItem.count--;
+          }
+        });
+      },
       child: Container(
         alignment: Alignment.center,
         width: ScreenAdapter.width(45),
@@ -47,7 +54,11 @@ class _CartNumState extends State<CartNum> {
   ///右侧按钮
   Widget _rightBtn() {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        setState(() {
+          widget.productContentItem.count++;
+        });
+      },
       child: Container(
         alignment: Alignment.center,
         width: ScreenAdapter.width(45),
@@ -68,7 +79,7 @@ class _CartNumState extends State<CartNum> {
             left: BorderSide(width: 1, color: Colors.black12),
             right: BorderSide(width: 1, color: Colors.black12)),
       ),
-      child: Text('${widget.itemData["count"]}'),
+      child: Text('${widget.productContentItem.count}'),
     );
   }
 }

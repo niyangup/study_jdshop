@@ -1,8 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_jdshop/config/config.dart';
 import 'package:flutter_jdshop/model/product_content_model.dart';
+import 'package:flutter_jdshop/provider/cart_provider.dart';
+import 'package:flutter_jdshop/services/cart_service.dart';
+import 'package:flutter_jdshop/services/event_bus.dart';
 import 'package:flutter_jdshop/services/screen_adapter.dart';
 import 'package:flutter_jdshop/widget/buy_button.dart';
+import 'package:provider/provider.dart';
+import 'cart_num.dart';
 
 class ProductContentFirst extends StatefulWidget {
   final ProductContentItem productContentItem;
@@ -15,6 +22,10 @@ class ProductContentFirst extends StatefulWidget {
 class _ProductContentFirstState extends State<ProductContentFirst>
     with AutomaticKeepAliveClientMixin {
   List<Attr> attr;
+  StreamSubscription listen;
+
+  String _selectedValue;
+  var cartProvider;
 
   @override
   bool get wantKeepAlive => true;
@@ -24,6 +35,17 @@ class _ProductContentFirstState extends State<ProductContentFirst>
     super.initState();
     this.attr = widget.productContentItem.attr;
     _initAttr();
+    //监听eventBus广播
+    listen = eventBus.on<ProductContentEvent>().listen((event) {
+      print(event);
+      this._attrBottomSheet();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    listen?.cancel();
   }
 
   //初始化Attr 格式化数据
@@ -55,11 +77,18 @@ class _ProductContentFirstState extends State<ProductContentFirst>
         }
       }
     }
+
+    setState(() {
+      this._selectedValue = tempArr.join(',');
+      //给筛选属性赋值
+      widget.productContentItem.selectedAttr = this._selectedValue;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     ScreenAdapter.init(context);
+    cartProvider = Provider.of<Cart>(context);
 
     //处理图片
     String pic = Config.domain + widget.productContentItem.pic;
@@ -206,6 +235,22 @@ class _ProductContentFirstState extends State<ProductContentFirst>
                               ],
                             );
                           }).toList()),
+                          Divider(),
+                          Container(
+                            padding:
+                                EdgeInsets.only(left: ScreenAdapter.width(20)),
+                            margin: EdgeInsets.only(top: 10),
+                            height: ScreenAdapter.height(80),
+                            child: Row(
+                              children: <Widget>[
+                                Text("数量: ",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                SizedBox(width: 10),
+                                CartNum(widget.productContentItem),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -226,7 +271,12 @@ class _ProductContentFirstState extends State<ProductContentFirst>
                                   child: BuyButton(
                                       text: "加入购物车",
                                       color: Color.fromRGBO(253, 1, 0, 0.9),
-                                      callback: () {}),
+                                      callback: () async {
+                                        await CartService.addCart(
+                                            widget.productContentItem);
+                                        Navigator.pop(context); //关闭bottomSheet
+                                        cartProvider.updateCartList();
+                                      }),
                                 ),
                                 SizedBox(width: ScreenAdapter.width(20)),
                                 Expanded(
