@@ -1,6 +1,12 @@
 # flutter_jdshop
 
-A new Flutter application.
+- 首页 √ 
+- 分类 √ 
+    - 分类列表详情
+    - 搜索(手机/电脑)
+- 购物车 ing
+    - 首页->热门推荐item->加入购物车x2->购物车页面
+- 我的
 
 ## Getting Started
 
